@@ -49,8 +49,6 @@ const addDevice = async (req, res) => {
     }
 };
 
-apiRouter.post("/device", addDevice);
-
 apiRouter.post("/json-device", async (req, res) => {
     if (!req.body.id || !req.body.n || !req.body.k) {
         return res.status(400).send("Missing fields");
@@ -110,8 +108,6 @@ const deleteDevice = async (req, res) => {
         return res.status(500).send({ error: "Internal Server Error" });
     }
 };
-
-apiRouter.delete("/deletedevice", deleteDevice);
 
 const updateDevice = async (req, res) => {
     if (!req.body.oldid || !req.body.oldk) {
@@ -228,6 +224,8 @@ webRouter.get("/device/:id", async (req, res) => {
     }
 });
 
+apiRouter.post("/device", addDevice);
+apiRouter.delete("/deletedevice", deleteDevice);
 apiRouter.put("/updateDevice", updateDevice);
 
 module.exports = {
