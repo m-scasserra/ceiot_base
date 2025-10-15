@@ -89,6 +89,14 @@ Se pueden agregar credenciales públicas del atacante junto con un reverse shell
 
 # Command & Control
 
+Una vez colocado el dispositivo el mismo puede ser controlado remotamente.
+Para esto se implementa que este tenga comunicacion por LTE para realizar un SSH al mismo. Esto habilitaria el uso de comandos como: \
+- Captura de paquetes
+- Inyeccion de paquetes en el espectro de RF
+- Inicio y parada de un ataque de replay de paquetes
+
+Este metodo nos aisla de la red interna de la zona evitando posibles detecciones de paquetes sospechosos
+
 # Actions on Objetives
 
 ## Objetivo 1: Inhibir alertas de apertura
