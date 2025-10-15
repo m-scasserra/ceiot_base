@@ -34,15 +34,15 @@ Estos candados se comunican de manera inalámbrica con la misma para reportar el
 - La central se comunica usando HTTP y enviando un JSON sin cifrar.
 
 # Weaponization
-Basado en las vulnerabilidades encontradas se preparan diferentes posibles herramientas para explotarlas. Voy a centrarme en el Vector 1 para la realisacion y los vectore 2 y 3 quedan de referencia como vias alternativas
+Basado en las vulnerabilidades encontradas se preparan diferentes posibles herramientas para explotarlas. Voy a centrarme en el Vector 1 para la realización y los vectore 2 y 3 quedan de referencia como vías alternativas
 ## Vector 1
-Permite inyectar datos falsos directamente en los estados de los candados percibidos por al central. Esto no requiere acceso fisico al bus CAN ni a la central
-Herramientas: SDR y modulo computacional
+Permite inyectar datos falsos directamente en los estados de los candados percibidos por la central. Esto no requiere acceso físico al bus CAN ni a la central
+Herramientas: SDR y módulo computacional
 Pasos:
-- Preparacion de escucha pasiva para comprender tramas y formatos, modelando mensajes correctos que la central acepte utilizando un SDR. Se identifican campos criticos como lo son el ID, estado y nivel de bateria y las validaciones si es que pasee
-- Diseñar componente que pueda generar y transmitir estos mensajes validados respetando tiempos y secunciencia para evitar la deteccion de anomalias.
-- Evitar la transmision de datos legitimos de los candados seleccionados a vulnerar para evitar colisiones y asegurando que el unico mensaje procesado por la central con ese ID sea el nuestro. Centrandose en un candado a vulnerar a la vez
-- Mantener control de una telemetria coherente y evitar alarmas
+- Preparación de escucha pasiva para comprender tramas y formatos, modelando mensajes correctos que la central acepte utilizando un SDR. Se identifican campos críticos como lo son el ID, estado y nivel de batería y las validaciones si es que pasee
+- Diseñar un componente que pueda generar y transmitir estos mensajes validados respetando tiempos y secuencia para evitar la detección de anomalías.
+- Evitar la transmisión de datos legítimos de los candados seleccionados a vulnerar para evitar colisiones y asegurando que el único mensaje procesado por la central con ese ID sea el nuestro. Centrándose en un candado a vulnerar a la vez
+- Mantener control de una telemetría coherente y evitar alarmas
 
 ## Vector 2
 Bus CAN sin autenticación y cifrado
@@ -56,15 +56,15 @@ Pasos:
 ## Vector 3
 Central corriendo Linux con SSH
 Herramientas: Scripts para acceso al SSH.
-Se va a probar intentando un ataque de fuerza bruta utilizando diccionarios desde especificos (Bases de datos locales de credenciales filtradas) hasta mas genéricos (Bases de datos de credenciales de dispositivos IoT).
+Se va a probar intentando un ataque de fuerza bruta utilizando diccionarios desde especificos (Bases de datos locales de credenciales filtradas) hasta más genéricos (Bases de datos de credenciales de dispositivos IoT).
 Una vez dentro de la central podemos utilizar WireShark para identificar los paquetes con los datos necesarios y con un script interceptor HTTP podemos modificarlos.
 
 # Delivery y Exploitation
 El delivery se pueden plantear dos casos, uno en el cual se pueda tener acceso a la red interna y otro en la cual no
 
 ## Sin acceso a la red interna
-Priorizando el vector 1, acciono sobre el canal inalambrico MiWi para el delivery y exploitation.
-Se interfiere y/o suplanta exclusivamente el candado a vulnerar en el canal inalambrico.
+Priorizando el vector 1, accionando sobre el canal inalámbrica MiWi para el delivery y exploitation.
+Se interfiere y/o suplanta exclusivamente el candado a vulnerar en el canal inalámbrico.
 Este ataque seria un T1557.002 - Man-in-the-Middle: ARP Cache Poisoning y un T0831 - Manipulation of Control pero adaptado a redes RF.
 
 ## Acceso a red interna CAN
@@ -76,12 +76,14 @@ Este ataque sería un T1110.001 - Password Guessing (SSH) y una vez logrado acce
 En el caso de no tener acceso al cableado CAN, pero si acceso a la red donde se encuentra la central podemos utilizar el Vector 3 para obtener acceso.
 
 # Installation
+
 ## Persistencia del componente MiWi
-El Vector 1 al ser un SDR controlado por un dispositivo que puede ser una computadora puede agregarse capacidades remotas para poder ser controlado y que pueda capturar y cambiar los datos que retransmite para poder hacerse pasar por diferentes candados.
+El Vector 1 al ser un SDR controlado por un dispositivo que puede ser una computadora puede agregar capacidades remotas para poder ser controlado y que pueda capturar y cambiar los datos que retransmite para poder hacerse pasar por diferentes candados.
 Pasos:
-- Instalar el dispositivo SDR junto con su control remoto en una ubicacion oculta cerca de las puertas a vulnerar.
-- El dispositivo capta y emula las señales de los candados a emular mediante ejeccucion remota de comandos.
-- Usa tecnologia 4G o GPRS para poder se controlado remotamente, saltenado la necesidad de conexion fisica a una red.
+- Instalar el dispositivo SDR junto con su control remoto en una ubicación oculta cerca de las puertas a vulnerar.
+- El dispositivo capta y emula las señales de los candados a emular mediante ejecución remota de comandos.
+- Usa tecnología 4G o GPRS para poder ser controlado remotamente, salteando la necesidad de conexión física a una red.
+
 ## Persistencia del componente CAN
 El Vector 2 al ser una interfaz CAN controlado por un dispositivo que puede ser una computadora puede agregarse capacidades remotas para poder ser controlado y que pueda capturar y cambiar los datos que inyecta al BUS
 ## Persistencia del acceso SSH
@@ -90,20 +92,22 @@ Se pueden agregar credenciales públicas del atacante junto con un reverse shell
 # Command & Control
 
 Una vez colocado el dispositivo el mismo puede ser controlado remotamente.
-Para esto se implementa que este tenga comunicacion por LTE para realizar un SSH al mismo. Esto habilitaria el uso de comandos como: \
+Para esto se implementa que este tenga comunicación por LTE para realizar un SSH al mismo. Esto habilita el uso de comandos como: 
 - Captura de paquetes
-- Inyeccion de paquetes en el espectro de RF
+- Inyección de paquetes en el espectro de RF
 - Inicio y parada de un ataque de replay de paquetes
 
-Este metodo nos aisla de la red interna de la zona evitando posibles detecciones de paquetes sospechosos
+Este método nos aísla de la red interna de la zona evitando posibles detecciones de paquetes sospechosos
 
-# Actions on Objetives
+# Actions on Objectives
 
 ## Objetivo 1: Inhibir alertas de apertura
 Resultado: La central no recibe notificaciones de apertura por ende, nunca las transmite.
 ## Objetivo 2: Reportar datos falsos continuos
 Resultado: El centro de control recibe datos fabricados
 ## Objetivo 4: Puerta de entrada a la red Interna
-Resultado: Se logró que un dispositivo infectado este en la infraestructura de los depósitos fiscales
+Resultado: Se logró que un dispositivo infectado esté en la infraestructura de los depósitos fiscales
+
+
 
 
