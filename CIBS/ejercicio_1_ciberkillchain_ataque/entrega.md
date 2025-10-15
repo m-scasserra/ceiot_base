@@ -34,15 +34,15 @@ Estos candados se comunican de manera inalámbrica con la misma para reportar el
 - La central se comunica usando HTTP y enviando un JSON sin cifrar.
 
 # Weaponization
-Basado en las vulnerabilidades encontradas se preparan diferentes posibles herramientas para explotarlas
+Basado en las vulnerabilidades encontradas se preparan diferentes posibles herramientas para explotarlas. Voy a centrarme en el Vector 1 para la realisacion y los vectore 2 y 3 quedan de referencia como vias alternativas
 ## Vector 1
-Protocolo MiWi sin cifrado y autenticación
-Herramientas: SDR
+Permite inyectar datos falsos directamente en los estados de los candados percibidos por al central. Esto no requiere acceso fisico al bus CAN ni a la central
+Herramientas: SDR y modulo computacional
 Pasos:
-1. Captura de tramas MiWi en tiempo real
-2. Extracción de datos (ID, estado y bateria)
-3. Generar e inyectar datos falsos
-4. Evitar la transmisión de datos del dispositivo
+- Preparacion de escucha pasiva para comprender tramas y formatos, modelando mensajes correctos que la central acepte utilizando un SDR. Se identifican campos criticos como lo son el ID, estado y nivel de bateria y las validaciones si es que pasee
+- Diseñar componente que pueda generar y transmitir estos mensajes validados respetando tiempos y secunciencia para evitar la deteccion de anomalias.
+- Evitar la transmision de datos legitimos de los candados seleccionados a vulnerar para evitar colisiones y asegurando que el unico mensaje procesado por la central con ese ID sea el nuestro. Centrandose en un candado a vulnerar a la vez
+- Mantener control de una telemetria coherente y evitar alarmas
 
 ## Vector 2
 Bus CAN sin autenticación y cifrado
@@ -63,8 +63,9 @@ Una vez dentro de la central podemos utilizar WireShark para identificar los paq
 El delivery se pueden plantear dos casos, uno en el cual se pueda tener acceso a la red interna y otro en la cual no
 
 ## Sin acceso a la red interna
-Este ataque seria un T1557.002 - Man-in-the-Middle: ARP Cache Poisoning pero adaptado a redes RF.
-Podemos utilizar el dispositivo descrito en el Vector 1 para poder suplantar las transmisiones del candado.
+Priorizando el vector 1, acciono sobre el canal inalambrico MiWi para el delivery y exploitation.
+Se interfiere y/o suplanta exclusivamente el candado a vulnerar en el canal inalambrico.
+Este ataque seria un T1557.002 - Man-in-the-Middle: ARP Cache Poisoning y un T0831 - Manipulation of Control pero adaptado a redes RF.
 
 ## Acceso a red interna CAN
 Este ataque seria un T1110 - Brute Force adaptado a un CANBus.
@@ -76,7 +77,11 @@ En el caso de no tener acceso al cableado CAN, pero si acceso a la red donde se 
 
 # Installation
 ## Persistencia del componente MiWi
-El Vector 1 al ser un SDR controlado por un dispositivo que puede ser una computadora puede agregarse capacidades remotas para poder ser controlado y que pueda capturar y cambiar los datos que retransmite para poder hacerse pasar por diferentes candados
+El Vector 1 al ser un SDR controlado por un dispositivo que puede ser una computadora puede agregarse capacidades remotas para poder ser controlado y que pueda capturar y cambiar los datos que retransmite para poder hacerse pasar por diferentes candados.
+Pasos:
+- Instalar el dispositivo SDR junto con su control remoto en una ubicacion oculta cerca de las puertas a vulnerar.
+- El dispositivo capta y emula las señales de los candados a emular mediante ejeccucion remota de comandos.
+- Usa tecnologia 4G o GPRS para poder se controlado remotamente, saltenado la necesidad de conexion fisica a una red.
 ## Persistencia del componente CAN
 El Vector 2 al ser una interfaz CAN controlado por un dispositivo que puede ser una computadora puede agregarse capacidades remotas para poder ser controlado y que pueda capturar y cambiar los datos que inyecta al BUS
 ## Persistencia del acceso SSH
