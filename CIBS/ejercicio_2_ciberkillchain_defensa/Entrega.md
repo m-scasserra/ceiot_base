@@ -10,7 +10,7 @@ Resolución
 
 # Resolucion
 
-## Action on objectives
+# Action on objectives
 **Deteccion**: Implementación de una correlación entre el evento físico y el digital
 - Sensores de apertura y de estado redundantes que reporten por canal independiente como puede ser una alarma sonora o lumínica.
 - Detección por parte de la central de estos sensores redundantes.
@@ -19,6 +19,19 @@ Resolución
 **Mitigacion**: Sistema de verificación con cámara
 - Uso de una cámara física para la detección visual del estado del candado
 - Se puede implementar IA para la detección automática del estado
+
+# Command & Control
+
+**Detección de análisis espectral**
+- Implementación de un analizador de espectro para la detección de señales anómalas fuera del espectro esperado.
+- Puede ser un SDR de bajo costo dado que los depósitos se encuentran en lugares remotos de muy bajo tránsito peatonal en los horarios a vigilar
+- Comunicaciones fuera del espectro MiWi pueden indicar posibles actores sospechosos en la zona
+
+**Implementación de FHSS**
+- Configuración de cansados y centrales para que salten de canal de comunicación en un orden pseudoaleatorio
+- Secuencia intercambiada sólo durante el pairing de dispositivos garantiza desconocimiento del atacante
+- Dificulta la captura y replay de mensajes
+- Pueden configurarse alertas en caso de mensajes en canales no esperados
 
 # Installation
 **Detección de dispositivos desconocidos en proximidad**
